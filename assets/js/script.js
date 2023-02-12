@@ -4,8 +4,7 @@ var startQuiz = document.querySelector("#start");
 var timer = document.querySelector("#timer");
 var problem = document.querySelector("#problem");
 
-// make the question list as an array and the actual question sets will be nested objects
-
+// each question set is an object containing the question, each answer, and whether each answer is true or false
 const q1 = {
     q: "HTML stands for what?",
     1: {
@@ -17,47 +16,78 @@ const q1 = {
         isTrue: true,
     },
     3: {
-        a: "heavy metal taco logos",
+        a: "heavy metal laser targets",
         isTrue: false,
-    } ,
+    },
+    4: {
+        a: "hotmail.com",
+        isTrue: false,
+    },
 };
 
 const q2 = {
-    q: "this is the question",
+    q: "what is not a primitive data type?",
     1: {
-        a: "this is the bloody answer so pick this answer goddammit",
+        a: "object",
         isTrue: true,
     },
     2: {
-        a: "this is not the answer i swear to god if you pick this one you will make me physically ill",
+        a: "boolean",
         isTrue: false,
     },
     3: {
-        a: "this is also false just pick the first one oh my god we told you the answer what are you doing with your life",
+        a: "string",
+        isTrue: false,
+    },
+    4: {
+        a: "number",
+        isTrue: false,
     },
 };
 
 const q3 = {
-    q: "is this a question",
+    q: "how can you tell if your query is for the ID of an element?",
     1: {
-        a: "bruh",
+        a: "there should be a # symbol at the start of the id name",
         isTrue: true,
     },
     2: {
-        a: "just pick #1",
+        a: "all IDs say id in the name",
         isTrue: false,
     },
     3: {
-        a: "i wish i had done arrays kinda but pick one that is the answer",
+        a: "spidey-sense",
+        isTrue: false,
+    },
+    4: {
+        a: "IDs have a . at the beginning of the id name",
         isTrue: false,
     },
 };
 
+const q4 = {
+    q: "how can i find out if a number is even using JavaScript code?",
+    1: {
+        a: "ask chatGPT to do it for you",
+        isTrue: false,
+    },
+    2: {
+        a: "if % (modulo) 2 = 0 there is no remainder when dividing the number by 2 which means it is even",
+        isTrue: true,
+    },
+    3: {
+        a: "ask your mum",
+        isTrue: false,
+    },
+    4: {
+        a: "use a for loop to iterate from 1 to your number with stepsize = 2 and if you reach your number it is even",
+    },
+}
 
 
-var timeLeft = 10; //initialize variable for timer
-var score = 0; 
-var questionList = [q1, q2, q3];
+var timeLeft = 30; //initialize variable for timer
+var score = 0;  // will hold the score if the user finishes the test before the time runs out
+var questionList = [q1, q2, q3, q4];
 // console.log(q1[1].isTrue);
 
 function getQuestions(index) {
@@ -68,6 +98,7 @@ function getQuestions(index) {
     var a1 = currentQuestion[1].a; //set variable to log each answer value for the current question
     var a2 = currentQuestion[2].a;
     var a3 = currentQuestion[3].a;
+    var a4 = currentQuestion[4].a;
     quizBox.appendChild(answerList); // dynamically create ordered list that will be placed in the the quizbox area 
     answer1 = document.createElement("li") // create list item that will populate ol
     answer1.textContent = a1; // set a1 to take the 1st li spot because then the numbers of the ol will match up with the answer #
@@ -78,19 +109,23 @@ function getQuestions(index) {
     answer3 = document.createElement("li")
     answer3.textContent = a3;
     answerList.appendChild(answer3);
+    answer4 = document.createElement("li")
+    answer4.textContent = a4;
+    answerList.appendChild(answer4);
     response = addEventListener("keydown", function(event) { // wait for user to type a key 1-4 to answer
         response = event.key; //record the value of that key
         console.log(response);
-        if (response > 0 && response < 4) { //if the key pressed is one of the possible answers (keys 1-4) then invoke getResults
+        if (response > 0 && response < 5) { //if the key pressed is one of the possible answers (keys 1-4) then invoke getResults
             getResults(response, currentQuestion);
         }
         if (index < questionList.length && timeLeft > 0) {
-            index ++;
+            index ++; // this will let me iterate through all the questions but with more control than a for loop
             answerList.remove(); // remove the ol for the current question set so that the next question set isn't just lumped in with the current set.
-            getQuestions(index);
+            getQuestions(index); // recursion ftw! if current question was answered, the index is incrememnted and recalling the function will repopulate the question area but with the next question/answer set
         } 
+        
     });
-    // if  (currentQuestion[response].isTrue === false) {timeLeft =-5};
+
 };
 
 function getResults(response, index) { //takes filtered response from user along with index of question object
@@ -111,11 +146,15 @@ function takeQuiz() {
         timeLeft--;
         timer.textContent ="Time: " +timeLeft + "s"; 
         
-    if(timeLeft <= 0) {clearInterval(timerInterval);
+    if(timeLeft <= 0) {clearInterval(timerInterval); //
         problem.textContent = "Time's up!!!!!"; 
         answerList.textContent = "";
-    }
-    
+    };
+    // if (index === questionList.length) {
+    //     score = timeLeft;
+    //     clearInterval(timerInterval);
+    //     console.log(score);
+    // };
     }, 1000); //step-size = 1000ms (1s)
     index = 0;
     getQuestions(index);
