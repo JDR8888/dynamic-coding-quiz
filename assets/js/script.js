@@ -1,13 +1,13 @@
-// establish js variables that link to the correct html item. the biggest thing we will target will be the main element wwith "quizbox" id, to populate with each set of question/answers during the actual quiz. secondly, we want our button in the quizbox to have an event listener to start the game when clicked. 3rd, we want to target the h3 in the div in the header with id "time" where we will populate "Time: " with however ever many seconds there are, based on the variable storing the countdown (which can be affected by getting a question right or wrong)
-var quizBox = document.querySelector("#quizbox");
-var startQuiz = document.querySelector("#start");
-var timer = document.querySelector("#timer");
-var problem = document.querySelector("#problem");
-var scoreBoard = document.querySelector("#recent-scores");
-var scoreCheck = document.querySelector("#score-refresh");
-const record = {};
-user = "";
-var contents;
+// initiate necessary variables
+var quizBox = document.querySelector("#quizbox"); //where the quiz content will be dynamically added
+var startQuiz = document.querySelector("#start"); //start button
+var timer = document.querySelector("#timer"); // area to show timer
+var problem = document.querySelector("#problem"); // the heading element of the quizbox to display the questions - answers will be placed into a generated ordered list each time function getQuestions is called
+var scoreBoard = document.querySelector("#recent-scores"); // to target the area of the scoreboard html page to populate the new score
+var scoreCheck = document.querySelector("#score-refresh"); //button to update scoreboard page by pulling data from local storage
+const record = {}; //will store the object to be saved in local storage
+user = ""; // will store the user's prompted initials/name
+var contents; //a variable to help w/ steps from JSON to object, etc.
 
 // each question set is an object containing the question, each answer, and whether each answer is true or false
 const q1 = {
@@ -201,17 +201,16 @@ const q10 = {
     },
 };
 
-
 var timerInterval; //declaring outside of takeQuiz so that i can stop the timer from within getQuestions if i run out of questions
 var timeLeft = 100; //initialize variable for timer
 var score = 0;  // will hold the score if the user finishes the test before the time runs out
 var questionList = [q1, q2, q3, q4, q5, q6, q7, q8, q9, q10];
-// console.log(q1[1].isTrue);
+
 
 function getQuestions(index) {
-    currentQuestion = questionList[index];
-    problem.textContent = currentQuestion.q;
-    answerList = document.createElement("ol");
+    currentQuestion = questionList[index]; //takes question form array of questions based on index
+    problem.textContent = currentQuestion.q; //changes quizbox heading to display current question text
+    answerList = document.createElement("ol"); //generates ordered list to display answer options
     var a1 = currentQuestion[1].a; //set variable to log each answer value for the current question
     var a2 = currentQuestion[2].a;
     var a3 = currentQuestion[3].a;
@@ -232,20 +231,17 @@ function getQuestions(index) {
     response = addEventListener("keydown", function(event) { // wait for user to type a key 1-4 to answer
         response = event.key; //record the value of that key
         if (response > 0 && response <= 4) { //if the key pressed is one of the possible answers (keys 1-4) then invoke getResults
-            getResults(response, currentQuestion);
-            index ++;
+            getResults(response, currentQuestion); //user's response is sent to getResults to analyze for true/false
+            index ++; //index increments
         }
-        if (index < questionList.length && timeLeft > 0) {
-             // this will let me iterate through all the questions but with more control than a for loop
+        if (index < questionList.length && timeLeft > 0) { //check if we have reached the end of our list of questions
             answerList.remove(); // remove the ol for the current question set so that the next question set isn't just lumped in with the current set.
             getQuestions(index); // recursion ftw! if current question was answered, the index is incrememnted and recalling the function will repopulate the question area but with the next question/answer set
         } else if (index == questionList.length && timeLeft > 0) { 
             score = timeLeft;
-            clearInterval(timerInterval);
-            newScore(score, user);
-            scoreChecker();
-            // this.alert('you did ok i guess');
-            // checker();
+            clearInterval(timerInterval); //if we've answered all the questions we stop the timer and set our score equal to timeLeft
+            newScore(score, user); //send the user's initials and score to newScore function
+            scoreChecker(); // scoreChecker will take the user to the scoreboard page
         };  
     });
     
@@ -258,30 +254,24 @@ function getResults(response, index) { //takes filtered response from user along
     if (result === false) {timeLeft = timeLeft - 5}; //if answer was wrong and boolean is false then timeleft loses 5 seconds
     return;
 };
-function newScore(score, user) {
-        console.log(score + user);
+function newScore(score, user) { //put user name/intials and score into the record object
         record.user = user;
-        record.score = score;
+        record.score = score; // save to local storage with JSON
         window.localStorage.setItem("record", JSON.stringify(record));
-        console.log(record.user); 
         index = 0;     
         return;        
 };
 
-function scoreChecker() {
-    // alert("let's check out the scoreboard");
+function scoreChecker() { // take the user to scoreboard page when quiz is complete
     window.location.href ="https://jdr8888.github.io/dynamic-coding-quiz/assets/scoreboard.html";
-    
-
 };
 
 
-function getMyData() {
+function getMyData() { //called with event listener (button on scoreboard page)
     nextScore = scoreBoard.appendChild(document.createElement("li"));
-    console.log(scoreBoard);
-    var storage = localStorage.getItem("record");
-    var contents = JSON.parse(storage);
-    var user = contents.user;
+    var storage = localStorage.getItem("record"); // get saved score/name from local web storage
+    var contents = JSON.parse(storage); //turn back into an object
+    var user = contents.user; // target the values and put the values on the scoreboard
     var score = contents.score;
     nextScore.textContent = user + " : " + score;
 };
@@ -289,12 +279,12 @@ function getMyData() {
 function takeQuiz() {
     alert("welcome to the quiz! follow the prompts and if you pass you will automatically be taken to the scoreboard page, if not you will be yelled at.")
     user = prompt("please put your initals or name to begin quiz", 'aaa');
-    startQuiz.setAttribute("style","display:none");
+    startQuiz.setAttribute("style","display:none"); // get rid of the button to make space in the quizbox area
     index = 0;
     timer.textContent = ""; //clear the text in the timer area 
     timer.textContent = "Time: " + timeLeft + "s";  //populate the timer area with "time" and how many seconds remain
     alert("answer a question by pressing keys corresponding to answer # (1-4)");
-    timerInterval = setInterval(function() {
+    timerInterval = setInterval(function() { // start the timer
         timeLeft--;
         timer.textContent ="Time: " +timeLeft + "s"; 
         
@@ -306,8 +296,7 @@ function takeQuiz() {
     
     }, 1000); //step-size = 1000ms (1s)
 
-    //timer has started counting down, and with index set to 0 i will generate the question/answer sets using getQuestions() function with index = 0 (so that i know to start with the first question from my array)
-    getQuestions(index);
+    getQuestions(index); //now that timer is going, call the getQuestions function
 
 };
 
