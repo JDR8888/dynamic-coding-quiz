@@ -106,97 +106,97 @@ const q5 = {
     },
 };
 const q6 = {
-    q: "how do i add my newly made element to what i want to be its parent element",
+    q: "for an empty object, I can initiate a variable equal to what?",
     1: {
-        a: "parentElement.appendchild(newlyMadeEl)",
-        isTrue: true,
+        a: "''",
+        isTrue: false,
     },
     2: {
-        a: "you can't do that",
+        a: "[]",
         isTrue: false,
     },
     3: {
-        a: "use the .pop() method",
+        a: "<>",
         isTrue: false,
     },
     4: {
-        a: "",
-        isTrue: false,
+        a: "{}",
+        isTrue: true,
     },
 };
 const q7 = {
-    q: "what method can i use to add something to the beginning of an array?",
+    q: "what sort of data/info does a window.confirm() return?",
     1: {
-        a: "use the .unshift() method",
-        isTrue: true,
+        a: "a string based on user input",
+        isTrue: false,
     },
     2: {
-        a: "use the .shift() method",
+        a: "cookies",
         isTrue: false,
     },
     3: {
-        a: "use the .pop() method",
-        isTrue: false,
+        a: "a boolean value",
+        isTrue: true,
     },
     4: {
-        a: "captains.log(add.front() )",
+        a: "an object",
         isTrue: false,
     },
 };
 const q8 = {
-    q: "what method can i use to add something to the beginning of an array?",
+    q: "what does myArray.pop() do?",
     1: {
-        a: "use the .unshift() method",
+        a: "removes the last item of the array",
         isTrue: true,
     },
     2: {
-        a: "use the .shift() method",
+        a: "pops an item into the array at the end",
         isTrue: false,
     },
     3: {
-        a: "use the .pop() method",
+        a: " hmmm...42",
         isTrue: false,
     },
     4: {
-        a: "captains.log(add.front() )",
+        a: "creates a popup window that displays the index of the array listed in the parentheses",
         isTrue: false,
     },
 };
 const q9 = {
-    q: "what method can i use to add something to the beginning of an array?",
+    q: "you look a bit rough today so here's a freebie",
     1: {
-        a: "use the .unshift() method",
+        a: "this is the right answer, so if you can read then you should be set",
         isTrue: true,
     },
     2: {
-        a: "use the .shift() method",
+        a: "i sweat to god if you pick this option just to spite me...",
         isTrue: false,
     },
     3: {
-        a: "use the .pop() method",
+        a: "OMG why are you still reading the answers you already saw the right answer please stop oh god",
         isTrue: false,
     },
     4: {
-        a: "captains.log(add.front() )",
+        a: "this is the fourth option, also incorrect, like 2 and 3.",
         isTrue: false,
     },
 };
 const q10 = {
-    q: "what method can i use to add something to the beginning of an array?",
+    q: "what does CSS stand for?",
     1: {
-        a: "use the .unshift() method",
-        isTrue: true,
+        a: "Cast-stating type sheets",
+        isTrue: false,
     },
     2: {
-        a: "use the .shift() method",
+        a: "capsizing centipedes",
         isTrue: false,
     },
     3: {
-        a: "use the .pop() method",
-        isTrue: false,
+        a: "cascading stylesheets",
+        isTrue: true,
     },
     4: {
-        a: "captains.log(add.front() )",
+        a: "c(ascadia) s(national) s(park)",
         isTrue: false,
     },
 };
