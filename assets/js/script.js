@@ -202,12 +202,12 @@ const q10 = {
 };
 
 var timerInterval; //declaring outside of takeQuiz so that i can stop the timer from within getQuestions if i run out of questions
-var timeLeft = 100; //initialize variable for timer
+var timeLeft = 150; //initialize variable for timer
 var score = 0;  // will hold the score if the user finishes the test before the time runs out
 var questionList = [q1, q2, q3, q4, q5, q6, q7, q8, q9, q10];
 
 
-function getQuestions(index) {
+function getQuestions(index) { //called from takeQuiz
     currentQuestion = questionList[index]; //takes question form array of questions based on index
     problem.textContent = currentQuestion.q; //changes quizbox heading to display current question text
     answerList = document.createElement("ol"); //generates ordered list to display answer options
@@ -251,9 +251,14 @@ function getResults(response, index) { //takes filtered response from user along
     // console.log(response);
     result = (index[response].isTrue); 
     // console.log(result);
-    if (result === false) {timeLeft = timeLeft - 5}; //if answer was wrong and boolean is false then timeleft loses 5 seconds
-    return;
+    if (result === true) {
+        return;
+    } else {
+        // timeLeft = timeLeft - 2;
+        return;
+    }; //if answer was wrong and boolean is false then timeleft loses 5 seconds
 };
+
 function newScore(score, user) { //put user name/intials and score into the record object
         record.user = user;
         record.score = score; // save to local storage with JSON
