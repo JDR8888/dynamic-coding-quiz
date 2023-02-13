@@ -52,23 +52,39 @@ button {
     margin: 5%;
     border: 3px dashed white;
 }
+
+button:hover {
+   border: 3px solid #5b6571;
+   background-color: #070c12; 
+}
 section {
     display: flex;
     font-size: 2em;
     width: 100%;
     justify-content: center;
-    background-color: #070c12;
     width: 100%;
 }
 a {
     text-decoration: none;
     color: #d3d8de;
+    background-color: #070c12;
+}
+a:hover {
+    background-color: #5b6571;
+    color: #192A3F;
 }
 
-#score-rank {
+#recent-scores {
     width: 69%;
 }
+
 ol li {
     padding: 1%;
     font-size: 1.25em;
+}
+#button-box {
+    font-size: 1em;
+}
+#score-refresh {
+    width: 100%;
 }

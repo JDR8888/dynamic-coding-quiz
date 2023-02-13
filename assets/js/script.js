@@ -3,6 +3,11 @@ var quizBox = document.querySelector("#quizbox");
 var startQuiz = document.querySelector("#start");
 var timer = document.querySelector("#timer");
 var problem = document.querySelector("#problem");
+var scoreBoard = document.querySelector("#recent-scores");
+var scoreCheck = document.querySelector("#score-refresh");
+const record = {};
+user = "";
+var contents;
 
 // each question set is an object containing the question, each answer, and whether each answer is true or false
 const q1 = {
@@ -24,7 +29,6 @@ const q1 = {
         isTrue: false,
     },
 };
-
 const q2 = {
     q: "what is not a primitive data type?",
     1: {
@@ -44,7 +48,6 @@ const q2 = {
         isTrue: false,
     },
 };
-
 const q3 = {
     q: "how can you tell if your query is for the ID of an element?",
     1: {
@@ -64,7 +67,6 @@ const q3 = {
         isTrue: false,
     },
 };
-
 const q4 = {
     q: "how can i find out if a number is even using JavaScript code?",
     1: {
@@ -81,20 +83,135 @@ const q4 = {
     },
     4: {
         a: "use a for loop to iterate from 1 to your number with stepsize = 2 and if you reach your number it is even",
+        isTrue: false,
     },
-}
+};
+const q5 = {
+    q: "what method can i use to add something to the beginning of an array?",
+    1: {
+        a: "use the .unshift() method",
+        isTrue: true,
+    },
+    2: {
+        a: "use the .shift() method",
+        isTrue: false,
+    },
+    3: {
+        a: "use the .pop() method",
+        isTrue: false,
+    },
+    4: {
+        a: "captains.log(add.front() )",
+        isTrue: false,
+    },
+};
+const q6 = {
+    q: "how do i add my newly made element to what i want to be its parent element",
+    1: {
+        a: "parentElement.appendchild(newlyMadeEl)",
+        isTrue: true,
+    },
+    2: {
+        a: "you can't do that",
+        isTrue: false,
+    },
+    3: {
+        a: "use the .pop() method",
+        isTrue: false,
+    },
+    4: {
+        a: "",
+        isTrue: false,
+    },
+};
+const q7 = {
+    q: "what method can i use to add something to the beginning of an array?",
+    1: {
+        a: "use the .unshift() method",
+        isTrue: true,
+    },
+    2: {
+        a: "use the .shift() method",
+        isTrue: false,
+    },
+    3: {
+        a: "use the .pop() method",
+        isTrue: false,
+    },
+    4: {
+        a: "captains.log(add.front() )",
+        isTrue: false,
+    },
+};
+const q8 = {
+    q: "what method can i use to add something to the beginning of an array?",
+    1: {
+        a: "use the .unshift() method",
+        isTrue: true,
+    },
+    2: {
+        a: "use the .shift() method",
+        isTrue: false,
+    },
+    3: {
+        a: "use the .pop() method",
+        isTrue: false,
+    },
+    4: {
+        a: "captains.log(add.front() )",
+        isTrue: false,
+    },
+};
+const q9 = {
+    q: "what method can i use to add something to the beginning of an array?",
+    1: {
+        a: "use the .unshift() method",
+        isTrue: true,
+    },
+    2: {
+        a: "use the .shift() method",
+        isTrue: false,
+    },
+    3: {
+        a: "use the .pop() method",
+        isTrue: false,
+    },
+    4: {
+        a: "captains.log(add.front() )",
+        isTrue: false,
+    },
+};
+const q10 = {
+    q: "what method can i use to add something to the beginning of an array?",
+    1: {
+        a: "use the .unshift() method",
+        isTrue: true,
+    },
+    2: {
+        a: "use the .shift() method",
+        isTrue: false,
+    },
+    3: {
+        a: "use the .pop() method",
+        isTrue: false,
+    },
+    4: {
+        a: "captains.log(add.front() )",
+        isTrue: false,
+    },
+};
 
 
-var timeLeft = 30; //initialize variable for timer
+var timerInterval; //declaring outside of takeQuiz so that i can stop the timer from within getQuestions if i run out of questions
+var timeLeft = 100; //initialize variable for timer
 var score = 0;  // will hold the score if the user finishes the test before the time runs out
-var questionList = [q1, q2, q3, q4];
+var questionList = [q1, q2, q3, q4, q5, q6, q7, q8, q9, q10];
 // console.log(q1[1].isTrue);
 
 function getQuestions(index) {
     currentQuestion = questionList[index];
     problem.textContent = currentQuestion.q;
     answerList = document.createElement("ol");
-    console.log(currentQuestion.q);
     var a1 = currentQuestion[1].a; //set variable to log each answer value for the current question
     var a2 = currentQuestion[2].a;
     var a3 = currentQuestion[3].a;
@@ -114,55 +231,97 @@ function getQuestions(index) {
     answerList.appendChild(answer4);
     response = addEventListener("keydown", function(event) { // wait for user to type a key 1-4 to answer
         response = event.key; //record the value of that key
-        console.log(response);
-        if (response > 0 && response < 5) { //if the key pressed is one of the possible answers (keys 1-4) then invoke getResults
+        if (response > 0 && response <= 4) { //if the key pressed is one of the possible answers (keys 1-4) then invoke getResults
             getResults(response, currentQuestion);
+            index ++;
         }
         if (index < questionList.length && timeLeft > 0) {
-            index ++; // this will let me iterate through all the questions but with more control than a for loop
+             // this will let me iterate through all the questions but with more control than a for loop
             answerList.remove(); // remove the ol for the current question set so that the next question set isn't just lumped in with the current set.
             getQuestions(index); // recursion ftw! if current question was answered, the index is incrememnted and recalling the function will repopulate the question area but with the next question/answer set
-        } 
-        
+        } else if (index == questionList.length && timeLeft > 0) { 
+            score = timeLeft;
+            clearInterval(timerInterval);
+            newScore(score, user);
+            scoreChecker();
+            // this.alert('you did ok i guess');
+            // checker();
+        };  
     });
-
+    
 };
 
 function getResults(response, index) { //takes filtered response from user along with index of question object
-    console.log(response);
-    result = (index[response].isTrue); // takes the boolean value for the isTrue key for whatever answer the user selected
-    console.log(result);
+    // console.log(response);
+    result = (index[response].isTrue); 
+    // console.log(result);
     if (result === false) {timeLeft = timeLeft - 5}; //if answer was wrong and boolean is false then timeleft loses 5 seconds
     return;
-}
+};
+function newScore(score, user) {
+        console.log(score + user);
+        record.user = user;
+        record.score = score;
+        window.localStorage.setItem("record", JSON.stringify(record));
+        console.log(record.user); 
+        index = 0;     
+        return;        
+};
+
+function scoreChecker() {
+    // alert("let's check out the scoreboard");
+    window.location.href ="file:///C:/Users/jrudl/bootcamp/projects/project-04/assets/scoreboard.html";
+    
+
+};
+
+
+function getMyData() {
+    nextScore = scoreBoard.appendChild(document.createElement("li"));
+    console.log(scoreBoard);
+    var storage = localStorage.getItem("record");
+    var contents = JSON.parse(storage);
+    var user = contents.user;
+    var score = contents.score;
+    nextScore.textContent = user + " : " + score;
+};
 
 function takeQuiz() {
+    alert("welcome to the quiz! follow the prompts and if you pass you will automatically be taken to the scoreboard page, if not you will be yelled at.")
+    user = prompt("please put your initals or name to begin quiz", 'aaa');
     startQuiz.setAttribute("style","display:none");
-
+    index = 0;
     timer.textContent = ""; //clear the text in the timer area 
     timer.textContent = "Time: " + timeLeft + "s";  //populate the timer area with "time" and how many seconds remain
     alert("answer a question by pressing keys corresponding to answer # (1-4)");
-    var timerInterval = setInterval(function() {
+    timerInterval = setInterval(function() {
         timeLeft--;
         timer.textContent ="Time: " +timeLeft + "s"; 
         
     if(timeLeft <= 0) {clearInterval(timerInterval); //
-        problem.textContent = "Time's up!!!!!"; 
+        problem.textContent = "Time's up and you lost! wow."; 
         answerList.textContent = "";
     };
-    // if (index === questionList.length) {
-    //     score = timeLeft;
-    //     clearInterval(timerInterval);
-    //     console.log(score);
-    // };
+
+    
     }, 1000); //step-size = 1000ms (1s)
-    index = 0;
+
+    //timer has started counting down, and with index set to 0 i will generate the question/answer sets using getQuestions() function with index = 0 (so that i know to start with the first question from my array)
     getQuestions(index);
 
-}
+};
 
-
-startQuiz.addEventListener("click", function(){
+// putting each event-listener in an if statement since they are for different pages - if a button does not exist in the current DOM (i.e. if it is on the other page) it will be considered null which means it will evaluate to false and throw an error. with each event-listener in an if statement, each button's event listener will only try to "listen" when the button actually exists on the page 
+if (startQuiz) {
+    startQuiz.addEventListener("click", function(){
     takeQuiz();
 }
 );
+};
+
+if (scoreCheck) {
+    scoreCheck.addEventListener("click", function() {
+    getMyData();
+}
+);
+};
