@@ -270,7 +270,7 @@ function newScore(score, user) {
 
 function scoreChecker() {
     // alert("let's check out the scoreboard");
-    window.location.href ="file:///C:/Users/jrudl/bootcamp/projects/project-04/assets/scoreboard.html";
+    window.location.href ="https://jdr8888.github.io/dynamic-coding-quiz/assets/scoreboard.html";
     
 
 };
