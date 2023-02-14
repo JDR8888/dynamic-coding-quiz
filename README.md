@@ -20,7 +20,6 @@ THEN I can save my initials and my score
 The deployed page is: https://jdr8888.github.io/dynamic-coding-quiz
 
 
-
 The github repo is https://github.com/JDR8888/dynamic-coding-quiz
 
 Screenshot of the page:

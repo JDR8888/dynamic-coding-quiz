@@ -8,6 +8,7 @@ var scoreCheck = document.querySelector("#score-refresh"); //button to update sc
 const record = {}; //will store the object to be saved in local storage
 user = ""; // will store the user's prompted initials/name
 var contents; //a variable to help w/ steps from JSON to object, etc.
+var answer; 
 
 // each question set is an object containing the question, each answer, and whether each answer is true or false
 const q1 = {
@@ -181,85 +182,199 @@ const q9 = {
         isTrue: false,
     },
 };
-const q10 = {
-    q: "what does CSS stand for?",
-    1: {
-        a: "Cast-stating type sheets",
-        isTrue: false,
-    },
-    2: {
-        a: "capsizing centipedes",
-        isTrue: false,
-    },
-    3: {
-        a: "cascading stylesheets",
-        isTrue: true,
-    },
-    4: {
-        a: "c(ascadia) s(national) s(park)",
-        isTrue: false,
-    },
-};
+// const q10 = {
+//     q: "what does CSS stand for?",
+//     1: {
+//         a: "Cast-stating type sheets",
+//         isTrue: false,
+//     },
+//     2: {
+//         a: "capsizing centipedes",
+//         isTrue: false,
+//     },
+//     3: {
+//         a: "cascading stylesheets",
+//         isTrue: true,
+//     },
+//     4: {
+//         a: "c(ascadia) s(national) s(park)",
+//         isTrue: false,
+//     },
+// };
 
 var timerInterval; //declaring outside of takeQuiz so that i can stop the timer from within getQuestions if i run out of questions
-var timeLeft = 150; //initialize variable for timer
+var timeLeft = 35; //initialize variable for timer
 var score = 0;  // will hold the score if the user finishes the test before the time runs out
-var questionList = [q1, q2, q3, q4, q5, q6, q7, q8, q9, q10];
+var questionList = [q1, q2, q3, q4, q5, q6, q7,q8,q9];
+var currentQuestion;
+var answerList;
+
+function takeQuiz() {
+    alert("welcome to the quiz! follow the prompts and if you pass you will automatically be taken to the scoreboard page, if not you will be yelled at.")
+    user = prompt("please put your initals or name to begin quiz", 'aaa');
+    startQuiz.setAttribute("style","display:none"); // get rid of the button to make space in the quizbox area
+    index = 0;
+    timer.textContent = ""; //clear the text in the timer area 
+    timer.textContent = "Time: " + timeLeft + "s";  //populate the timer area with "time" and how many seconds remain
+    alert("answer a question by clicking the one of the options");
+    timerInterval = setInterval(function() { // start the timer
+        timeLeft--;
+        timer.textContent ="Time: " +timeLeft + "s"; 
+        
+    if(timeLeft <= 0) {clearInterval(timerInterval); //
+        problem.textContent = "Time's up and you lost! not surprising."; 
+        answerList.remove();
+    };
+  
+    }, 1000); //step-size = 1000ms (1s)
+    getQuestions(index); //now that timer is going, call the getQuestions function
+};
 
 
 function getQuestions(index) { //called from takeQuiz
     currentQuestion = questionList[index]; //takes question form array of questions based on index
     problem.textContent = currentQuestion.q; //changes quizbox heading to display current question text
-    answerList = document.createElement("ol"); //generates ordered list to display answer options
+    answerList = document.createElement("div"); //generates ordered list to display answer options
     var a1 = currentQuestion[1].a; //set variable to log each answer value for the current question
     var a2 = currentQuestion[2].a;
     var a3 = currentQuestion[3].a;
     var a4 = currentQuestion[4].a;
-    quizBox.appendChild(answerList); // dynamically create ordered list that will be placed in the the quizbox area 
-    answer1 = document.createElement("li") // create list item that will populate ol
-    answer1.textContent = a1; // set a1 to take the 1st li spot because then the numbers of the ol will match up with the answer #
-    answerList.appendChild(answer1);  //now that it's created we want to actually append it to the list
-    answer2 = document.createElement("li") //do the exact same thing for questions 2-3
+    quizBox.appendChild(answerList); // create buttons that will be placed in the the quizbox area 
+    answer1 = document.createElement("button"); // create list item that will populate the div
+    answer1.textContent = a1;
+    var v1 = currentQuestion[1].isTrue; //set variable to log each true/false value 
+    var v2 = currentQuestion[2].isTrue;
+    var v3 = currentQuestion[3].isTrue;
+    var v4 = currentQuestion[4].isTrue; 
+    answerList.appendChild(answer1);  //now we want to append it to the list
+    var answer2 = document.createElement("button") //do the exact same thing for questions 2-3
     answer2.textContent = a2;
     answerList.appendChild(answer2);
-    answer3 = document.createElement("li")
+    var answer3 = document.createElement("button")
     answer3.textContent = a3;
     answerList.appendChild(answer3);
-    answer4 = document.createElement("li")
+    var answer4 = document.createElement("button")
     answer4.textContent = a4;
     answerList.appendChild(answer4);
-    response = addEventListener("keydown", function(event) { // wait for user to type a key 1-4 to answer
-        response = event.key; //record the value of that key
-        if (response > 0 && response <= 4) { //if the key pressed is one of the possible answers (keys 1-4) then invoke getResults
-            getResults(response, currentQuestion); //user's response is sent to getResults to analyze for true/false
-            index ++; //index increments
-        }
-        if (index < questionList.length && timeLeft > 0) { //check if we have reached the end of our list of questions
-            answerList.remove(); // remove the ol for the current question set so that the next question set isn't just lumped in with the current set.
-            getQuestions(index); // recursion ftw! if current question was answered, the index is incrememnted and recalling the function will repopulate the question area but with the next question/answer set
-        } else if (index == questionList.length && timeLeft > 0) { 
-            score = timeLeft;
-            clearInterval(timerInterval); //if we've answered all the questions we stop the timer and set our score equal to timeLeft
-            newScore(score, user); //send the user's initials and score to newScore function
-            scoreChecker(); // scoreChecker will take the user to the scoreboard page
-        };  
+    // tried to take care of getting answers with a single event listener for keypress but could not make it work. when doing event listeners for buttons it would skip them and go straight to incrementing index repeatedly, so i put the same set of code for each event listener so that it only triggers once we get one of the four buttons clicked 
+    answer1.addEventListener("click", function() {
+        answer = v1;
+        if (answer === false) {
+            timeLeft = timeLeft - 5;
+            index ++;
+            if (index == questionList.length) {
+                clearInterval(timerInterval);
+                score = timeLeft;
+                newScore(score, user);
+                scoreChecker();
+            } else {
+                answerList.remove();
+                getQuestions(index);
+            };
+        } else if (answer === true) {
+
+            index ++;
+            if (index == questionList.length) {
+                clearInterval(timerInterval);
+                score = timeLeft;
+                newScore(score, user);
+                scoreChecker();
+            } else {
+                answerList.remove();
+                getQuestions(index);
+            };
+        };
     });
-    
+
+    answer2.addEventListener("click", function() {
+        answer = v2;
+        if (answer === false) {
+            timeLeft = timeLeft - 5;
+            index ++;
+            if (index == questionList.length) {
+                clearInterval(timerInterval);
+                score = timeLeft;
+                newScore(score, user);
+                scoreChecker();
+            } else {
+                answerList.remove();
+                getQuestions(index);
+                };
+        } else if (answer === true) {
+            index ++;
+            if (index == questionList.length) {
+                clearInterval(timerInterval);
+                score = timeLeft;
+                newScore(score, user);
+                scoreChecker();
+            } else {
+                answerList.remove();
+                getQuestions(index);
+            };
+        };
+    });
+
+    answer3.addEventListener("click", function() {
+        answer = v3;
+        if (answer === false) {
+            timeLeft = timeLeft - 5;
+            index ++;
+            if (index == questionList.length) {
+                clearInterval(timerInterval);
+                score = timeLeft;
+                newScore(score, user);
+                scoreChecker();
+            } else {
+                answerList.remove();
+                getQuestions(index);
+                };
+        } else if (answer === true) {
+            console.log(index);
+            index ++;
+            if (index == questionList.length) {
+                clearInterval(timerInterval);
+                score = timeLeft;
+                newScore(score, user);
+                scoreChecker();
+            } else {
+                answerList.remove();
+                getQuestions(index);
+            };
+        };
+
+    });
+
+    answer4.addEventListener("click", function() {
+        answer = v4;
+        if (answer === false) {
+            timeLeft = timeLeft - 5;
+            index ++;
+            if (index == questionList.length) {
+                clearInterval(timerInterval);
+                score = timeLeft;
+                newScore(score, user);
+                scoreChecker();
+            } else {
+                answerList.remove();
+                getQuestions(index);
+                };
+        } else if (answer === true) {
+            index ++;
+            if (index == questionList.length) {
+                clearInterval(timerInterval);
+                score = timeLeft;
+                newScore(score, user);
+                scoreChecker();
+            } else {
+                answerList.remove();
+                getQuestions(index);
+            };
+        };
+    });  
 };
 
-function getResults(response, index) { //takes filtered response from user along with index of question object
-    // console.log(response);
-    result = (index[response].isTrue); 
-    // console.log(result);
-    if (result === true) {
-        return;
-    } else {
-        // timeLeft = timeLeft - 2;
-        return;
-    }; //if answer was wrong and boolean is false then timeleft loses 5 seconds
-};
 
-function newScore(score, user) { //put user name/intials and score into the record object
+function newScore(score, user) { //put user name/intials and score into local storage
         record.user = user;
         record.score = score; // save to local storage with JSON
         window.localStorage.setItem("record", JSON.stringify(record));
@@ -271,8 +386,7 @@ function scoreChecker() { // take the user to scoreboard page when quiz is compl
     window.location.href ="https://jdr8888.github.io/dynamic-coding-quiz/assets/scoreboard.html";
 };
 
-
-function getMyData() { //called with event listener (button on scoreboard page)
+function getMyData() { //called with event listener (button on scoreboard page) 
     nextScore = scoreBoard.appendChild(document.createElement("li"));
     var storage = localStorage.getItem("record"); // get saved score/name from local web storage
     var contents = JSON.parse(storage); //turn back into an object
@@ -281,29 +395,6 @@ function getMyData() { //called with event listener (button on scoreboard page)
     nextScore.textContent = user + " : " + score;
 };
 
-function takeQuiz() {
-    alert("welcome to the quiz! follow the prompts and if you pass you will automatically be taken to the scoreboard page, if not you will be yelled at.")
-    user = prompt("please put your initals or name to begin quiz", 'aaa');
-    startQuiz.setAttribute("style","display:none"); // get rid of the button to make space in the quizbox area
-    index = 0;
-    timer.textContent = ""; //clear the text in the timer area 
-    timer.textContent = "Time: " + timeLeft + "s";  //populate the timer area with "time" and how many seconds remain
-    alert("answer a question by pressing keys corresponding to answer # (1-4)");
-    timerInterval = setInterval(function() { // start the timer
-        timeLeft--;
-        timer.textContent ="Time: " +timeLeft + "s"; 
-        
-    if(timeLeft <= 0) {clearInterval(timerInterval); //
-        problem.textContent = "Time's up and you lost! wow."; 
-        answerList.textContent = "";
-    };
-
-    
-    }, 1000); //step-size = 1000ms (1s)
-
-    getQuestions(index); //now that timer is going, call the getQuestions function
-
-};
 
 // putting each event-listener in an if statement since they are for different pages - if a button does not exist in the current DOM (i.e. if it is on the other page) it will be considered null which means it will evaluate to false and throw an error. with each event-listener in an if statement, each button's event listener will only try to "listen" when the button actually exists on the page 
 if (startQuiz) {
